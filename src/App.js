@@ -4,8 +4,38 @@ import './App.css';
 const App = () => {
   // Define prices for each item
   const prices = {
-    // Define your prices here
+    'Savon ultra blanchissant': 12000,
+    'Savon noir blanchissant naija': 10000,
+    'Savon teint métissé dosé': 10000,
+    'Savon teint marron clair': 10000,
+    'Savon tomato blanchissant': 9000,
+    'Gel douche blanchissant': 10000,
+    'Gel douche blanchissant (petit)': 5000,
+    'Gel douche terminator': 12000,
+    'Lait ultra blanchissant': 15000,
+    'Lait extra métissé': 10000,
+    'Lait teint marron clair': 7000,
+    'Kit visage blanchissant': 15000,
+    'Kit visage métissé': 13000,
+    'Gamme ultra blanchissant': 50000,
+    'Gamme blanchissant': 40000,
+    'Gamme métissé dosé': 26000,
+    'Gamme métissé (simple)': 25000,
+    'Gamme marron clair': 18000,
+    'Mini gamme': 15000,
+    'Gommage blanchissant': 5000,
+    'Gommage café': 5000,
+    'Gommage blanchissant nila': 5000,
+    'Crème visage super blanchissant': 5000,
+    'Crème métissée': 3000,
+    'Savon visage blanchissant': 5000,
+    'Savon visage acné': 5000,
+    'Lotion visage blanchissant': 5000,
+    'Booster super blanchissant': 10000,
+    'Sérum Quinto': 10000,
+    'Crème Quinto': 8000,
   };
+
 
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
