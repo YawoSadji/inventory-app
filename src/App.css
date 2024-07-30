@@ -110,3 +110,28 @@ tr:hover {
   flex: 1 1 calc(50% - 20px);
   box-sizing: border-box;
 }
+
+/* App.css */
+nav {
+  margin-bottom: 20px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 10px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
