@@ -47,6 +47,8 @@ const App = () => {
   const [supplierOrders, setSupplierOrders] = useState([]);
   const [selectedSupplierProduct, setSelectedSupplierProduct] = useState('');
   const [supplierOrderQuantity, setSupplierOrderQuantity] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   // Fetch products and orders from localStorage on initial render
   useEffect(() => {
@@ -72,7 +74,8 @@ const App = () => {
       setSelectedProduct('');
       setProductQuantity('');
     } else {
-      alert('Veuillez entrer à la fois le nom du produit et la quantité');
+      setModalMessage('Veuillez entrer à la fois le nom du produit et la quantité');
+      setShowModal(true);
     }
   };
 
@@ -81,16 +84,23 @@ const App = () => {
     if (selectedOrderProduct && orderQuantity && customerName && customerPhone) {
       const productInStock = products.find(product => product.name === selectedOrderProduct);
       if (productInStock) {
-        setOrders([...orders, { name: selectedOrderProduct, quantity: parseInt(orderQuantity), customerName, customerPhone }]);
-        setSelectedOrderProduct('');
-        setOrderQuantity('');
-        setCustomerName('');
-        setCustomerPhone('');
+        if (orderQuantity > productInStock.quantity) {
+          setModalMessage('Quantité supérieure au nombre en stock');
+          setShowModal(true);
+        } else {
+          setOrders([...orders, { name: selectedOrderProduct, quantity: parseInt(orderQuantity), customerName, customerPhone }]);
+          setSelectedOrderProduct('');
+          setOrderQuantity('');
+          setCustomerName('');
+          setCustomerPhone('');
+        }
       } else {
-        alert('L\'article n\'est pas en stock');
+        setModalMessage('Produits Non Disponible en Stock');
+        setShowModal(true);
       }
     } else {
-      alert('Veuillez entrer le nom du produit, la quantité, le nom du client et le numéro de téléphone');
+      setModalMessage('Veuillez entrer le nom du produit, la quantité, le nom du client et le numéro de téléphone');
+      setShowModal(true);
     }
   };
 
@@ -118,7 +128,8 @@ const App = () => {
       setSelectedSupplierProduct('');
       setSupplierOrderQuantity('');
     } else {
-      alert('Veuillez entrer à la fois le nom du produit et la quantité');
+      setModalMessage('Veuillez entrer à la fois le nom du produit et la quantité');
+      setShowModal(true);
     }
   };
 
@@ -144,6 +155,10 @@ const App = () => {
 
   const handleCancelSupplierOrder = (orderIndex) => {
     setSupplierOrders(supplierOrders.filter((_, index) => index !== orderIndex));
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   // Format number to French notation
@@ -348,6 +363,10 @@ const App = () => {
 
       <h2>Total de l'inventaire</h2>
       <p>{formatNumber(totalInventoryValue)} F</p>
+
+      {showModal && (
+        <Modal message={modalMessage} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
