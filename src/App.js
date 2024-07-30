@@ -4,42 +4,14 @@ import './App.css';
 const App = () => {
   // Define prices for each item
   const prices = {
-    'Savon ultra blanchissant': 12000,
-    'Savon noir blanchissant naija': 10000,
-    'Savon teint métissé dosé': 10000,
-    'Savon teint marron clair': 10000,
-    'Savon tomato blanchissant': 9000,
-    'Gel douche blanchissant': 10000,
-    'Gel douche blanchissant (petit)': 5000,
-    'Gel douche terminator': 12000,
-    'Lait ultra blanchissant': 15000,
-    'Lait extra métissé': 10000,
-    'Lait teint marron clair': 7000,
-    'Kit visage blanchissant': 15000,
-    'Kit visage métissé': 13000,
-    'Gamme ultra blanchissant': 50000,
-    'Gamme blanchissant': 40000,
-    'Gamme métissé dosé': 26000,
-    'Gamme métissé (simple)': 25000,
-    'Gamme marron clair': 18000,
-    'Mini gamme': 15000,
-    'Gommage blanchissant': 5000,
-    'Gommage café': 5000,
-    'Gommage blanchissant nila': 5000,
-    'Crème visage super blanchissant': 5000,
-    'Crème métissée': 3000,
-    'Savon visage blanchissant': 5000,
-    'Savon visage acné': 5000,
-    'Lotion visage blanchissant': 5000,
-    'Booster super blanchissant': 10000,
-    'Sérum Quinto': 10000,
-    'Crème Quinto': 8000,
+    // Define your prices here
   };
 
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [productQuantity, setProductQuantity] = useState('');
   const [orders, setOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]); // Add state for completed orders
   const [selectedOrderProduct, setSelectedOrderProduct] = useState('');
   const [orderQuantity, setOrderQuantity] = useState('');
   const [customerName, setCustomerName] = useState('');
@@ -48,22 +20,25 @@ const App = () => {
   const [selectedSupplierProduct, setSelectedSupplierProduct] = useState('');
   const [supplierOrderQuantity, setSupplierOrderQuantity] = useState('');
 
-  // Fetch products and orders from localStorage on initial render
+  // Fetch products, orders, and completed orders from localStorage on initial render
   useEffect(() => {
     const savedProducts = JSON.parse(localStorage.getItem('inventory')) || [];
     const savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const savedCompletedOrders = JSON.parse(localStorage.getItem('completedOrders')) || []; // Fetch completed orders
     const savedSupplierOrders = JSON.parse(localStorage.getItem('supplierOrders')) || [];
     setProducts(savedProducts);
     setOrders(savedOrders);
+    setCompletedOrders(savedCompletedOrders); // Set completed orders
     setSupplierOrders(savedSupplierOrders);
   }, []);
 
-  // Save products and orders to localStorage whenever they change
+  // Save products, orders, completed orders, and supplier orders to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('inventory', JSON.stringify(products));
     localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('completedOrders', JSON.stringify(completedOrders)); // Save completed orders
     localStorage.setItem('supplierOrders', JSON.stringify(supplierOrders));
-  }, [products, orders, supplierOrders]);
+  }, [products, orders, completedOrders, supplierOrders]);
 
   const handleAddProduct = (e) => {
     e.preventDefault();
@@ -104,6 +79,7 @@ const App = () => {
     }).filter(product => product.quantity > 0);
 
     setProducts(updatedProducts);
+    setCompletedOrders([...completedOrders, order]); // Move order to completed orders
     setOrders(orders.filter((_, index) => index !== orderIndex));
   };
 
@@ -272,7 +248,6 @@ const App = () => {
           <table>
             <thead>
               <tr>
-                <th>Catégorie</th>
                 <th>Nom du produit</th>
                 <th>Quantité</th>
                 <th>Valeur</th>
@@ -281,7 +256,6 @@ const App = () => {
             <tbody>
               {products.map((product, index) => (
                 <tr key={index}>
-                  <td>{product.category}</td>
                   <td>{product.name}</td>
                   <td>{product.quantity}</td>
                   <td>{formatNumber(calculateItemValue(product.quantity, prices[product.name] || 0))} F</td>
@@ -294,7 +268,6 @@ const App = () => {
           <table>
             <thead>
               <tr>
-                <th>Catégorie</th>
                 <th>Nom du produit</th>
                 <th>Quantité</th>
                 <th>Nom du client</th>
@@ -305,7 +278,6 @@ const App = () => {
             <tbody>
               {orders.map((order, index) => (
                 <tr key={index}>
-                  <td>{order.category}</td>
                   <td>{order.name}</td>
                   <td>{order.quantity}</td>
                   <td>{order.customerName}</td>
@@ -323,7 +295,6 @@ const App = () => {
           <table>
             <thead>
               <tr>
-                <th>Catégorie</th>
                 <th>Nom du produit</th>
                 <th>Quantité</th>
                 <th>Action</th>
@@ -332,13 +303,34 @@ const App = () => {
             <tbody>
               {supplierOrders.map((order, index) => (
                 <tr key={index}>
-                  <td>{order.category}</td>
                   <td>{order.name}</td>
                   <td>{order.quantity}</td>
                   <td>
                     <button onClick={() => handleReceiveSupplierOrder(index)}>Recevoir</button>
                     <button onClick={() => handleCancelSupplierOrder(index)}>Annuler</button>
                   </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h2>Commandes client terminées</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Nom du produit</th>
+                <th>Quantité</th>
+                <th>Nom du client</th>
+                <th>Téléphone du client</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedOrders.map((order, index) => (
+                <tr key={index}>
+                  <td>{order.name}</td>
+                  <td>{order.quantity}</td>
+                  <td>{order.customerName}</td>
+                  <td>{order.customerPhone}</td>
                 </tr>
               ))}
             </tbody>
